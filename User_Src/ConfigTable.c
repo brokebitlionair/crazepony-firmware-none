@@ -144,9 +144,9 @@ void ParamSetDefault(void)
 		 
 	   pitch_angle_PID.iLimit = 300;	//or 1000
 		 
-     pitch_rate_PID.P  = 0.7; 
-     pitch_rate_PID.I  = 0.5; 		//0.5
-     pitch_rate_PID.D  = 0.03; 		 
+     pitch_rate_PID.P  = 5.5; 
+     pitch_rate_PID.I  = 0.01; 		//0.5
+     pitch_rate_PID.D  = 0.15; 		 
 	
 		 pitch_rate_PID.iLimit = 300;
 ////////////////////////////////////////////
@@ -155,9 +155,9 @@ void ParamSetDefault(void)
      roll_angle_PID.D = 0;
 		 roll_angle_PID.iLimit = 300;	//or 1000
 
-     roll_rate_PID.P  = 0.7;
-     roll_rate_PID.I  = 0.5;; 	//0.5
-     roll_rate_PID.D  = 0.03; 
+     roll_rate_PID.P  = 5.5;
+     roll_rate_PID.I  = 0.01;; 	//0.5
+     roll_rate_PID.D  = 0.15; 
 		 roll_rate_PID.iLimit = 300;
 ///////////////////////////////////////////
      yaw_angle_PID.P = 1;
@@ -180,12 +180,12 @@ void ParamSetDefault(void)
 			alt_vel_PID.D=0;
 			
 			 //should chango to read eeprom cfg. should be 0.
-			imu.accOffset[0]=-0.1620515;
-			imu.accOffset[1]=0.07422026;	
-			imu.accOffset[2]=0.7743073;
+			imu.accOffset[0]=0;
+			imu.accOffset[1]=0;	
+			imu.accOffset[2]=0;
 
-			imu.gyroOffset[0]=-0.06097556;
-			imu.gyroOffset[1]=-0.03780485;
+			imu.gyroOffset[0]=0;
+			imu.gyroOffset[1]=0;
 			imu.gyroOffset[2]=0;
 			
 		
