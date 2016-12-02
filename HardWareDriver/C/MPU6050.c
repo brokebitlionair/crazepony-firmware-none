@@ -193,8 +193,12 @@ void MPU6050AccRead(int16_t *accData)
     uint8_t buf[6];
 
     IICreadBytes(devAddr, MPU6050_RA_ACCEL_XOUT_H, 6, buf);
-    accData[0] = (int16_t)((buf[0] << 8) | buf[1]);
-    accData[1] = (int16_t)((buf[2] << 8) | buf[3]);
+//    accData[0] = (int16_t)((buf[0] << 8) | buf[1]);
+//    accData[1] = (int16_t)((buf[2] << 8) | buf[3]);
+//    accData[2] = (int16_t)((buf[4] << 8) | buf[5]);
+
+    accData[0] = (int16_t)((buf[2] << 8) | buf[3]);
+    accData[1] = (int16_t)(~((buf[0] << 8) | buf[1]));
     accData[2] = (int16_t)((buf[4] << 8) | buf[5]);
 
 
@@ -205,9 +209,13 @@ void MPU6050GyroRead(int16_t *gyroData)
     uint8_t buf[6];
 
     IICreadBytes(devAddr, MPU6050_RA_GYRO_XOUT_H, 6, buf);
-    gyroData[0] = (int16_t)((buf[0] << 8) | buf[1]) ;
-    gyroData[1] = (int16_t)((buf[2] << 8) | buf[3]) ;
-    gyroData[2] = (int16_t)((buf[4] << 8) | buf[5]) ;
+//    gyroData[0] = (int16_t)((buf[0] << 8) | buf[1]) ;
+//    gyroData[1] = (int16_t)((buf[2] << 8) | buf[3]) ;
+//    gyroData[2] = (int16_t)((buf[4] << 8) | buf[5]) ;
+
+    gyroData[0] = (int16_t)((buf[2] << 8) | buf[3]);
+    gyroData[1] = (int16_t)(~((buf[0] << 8) | buf[1]));
+    gyroData[2] = (int16_t)((buf[4] << 8) | buf[5]);
 }
 
 
