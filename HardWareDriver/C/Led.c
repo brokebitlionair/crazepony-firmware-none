@@ -48,20 +48,20 @@ Led4-->PB3
 ********************************************/
 void LedInit(void)
 {
-    RCC->APB2ENR|=1<<2;    //使能PORTA时钟	
-    RCC->APB2ENR|=1<<3;    //使能PORTB时钟	
-
-    RCC->APB2ENR|=1<<0;      //使能复用时钟	   
-    GPIOB->CRL&=0XFFFF0F0F;  //PB1,3推挽输出
-    GPIOB->CRL|=0X00003030;
-    GPIOB->ODR|=5<<1;        //PB1,3上拉
-  
-    GPIOA->CRH&=0XFFFF0FF0;  //PA8,11推挽输出
-    GPIOA->CRH|=0X00003003;
-    GPIOA->ODR|=9<<0;        //PA1,11上拉
-  
-    AFIO->MAPR|=2<<24;      //关闭JATG,千万不能将SWD也关闭，否则芯片作废，亲测!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    LedA_off;LedB_off;LedC_off;LedD_off;
+    GPIO_InitTypeDef GPIO_InitStructure;
+		RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA | RCC_APB2Periph_GPIOB,ENABLE);
+	
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_11;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_Init(GPIOA, &GPIO_InitStructure);
+		GPIO_SetBits(GPIOA, GPIO_Pin_11);
+		
+		GPIO_InitStructure.GPIO_Pin = GPIO_Pin_9|GPIO_Pin_8|GPIO_Pin_12;
+		GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+		GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+		GPIO_Init(GPIOB, &GPIO_InitStructure);
+		GPIO_SetBits(GPIOB, GPIO_Pin_9|GPIO_Pin_8|GPIO_Pin_12);
 }
 
 //底层更新 ，10Hz
@@ -87,12 +87,6 @@ void LEDReflash(void)
 			LedD_on;
 		else
 			LedD_off;
-		
-// 		
-// 		if(LEDBuf.bits.D)
-// 			LedD_on;
-// 		else
-// 			LedD_off;
 }
 
 //事件驱动层
@@ -101,8 +95,8 @@ void LEDFSM(void)
 	//闪烁状态由几个系统的标志决定,优先级依次按判断顺序上升
 	LEDCtrl.event=E_READY;
 
-	if(!imu.ready)		//开机imu准备
-		LEDCtrl.event=E_CALI;
+//	if(!imu.ready)		//开机imu准备
+//		LEDCtrl.event=E_CALI;
 	
 	if(1 == LostRCFlag)
 			LEDCtrl.event=E_LOST_RC;	
@@ -126,12 +120,7 @@ void LEDFSM(void)
 	switch(LEDCtrl.event)
 	{
 		case E_READY:
-				if(++LEDCtrl.cnt >= 3)		//0 1 2 in loop, 0 on ,else off
-					LEDCtrl.cnt=0;
-				if(LEDCtrl.cnt==0)
-						LEDBuf.byte =LA|LB;
-				else
-						LEDBuf.byte =0;
+				LEDBuf.byte =LA|LB|LC|LD;
 			break;
 		case E_CALI:
 				LEDBuf.byte=LA|LB;
