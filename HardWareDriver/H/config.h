@@ -15,7 +15,6 @@
 #include "Tim.h"
 #include "IIC.h"
 #include "sys_fun.h"
-#include "SPI.h"
 #include "control.h"
 #include "stmflash.h"
 #include "math.h"
