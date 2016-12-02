@@ -46,7 +46,7 @@ uint32_t realExecPrd[5];	//us , real called period in different loop
 int main(void)
 {
 
-	SystemClock_HSE(9);           //系统时钟初始化，时钟源外部晶振HSEs  8*9=72MHz;
+	SystemClock_HSI(12);           //系统时钟初始化，时钟源外部晶振HSEs  8*9=72MHz;
 	cycleCounterInit();				// Init cycle counter
 	SysTick_Config(SystemCoreClock / 1000);	//SysTick开启系统tick定时器并初始化其中断，1ms
 
@@ -60,7 +60,7 @@ int main(void)
 
   LedInit();	                //IO初始化
 
-  BT_PowerInit();               //蓝牙电源初始化完成，默认关闭
+  //BT_PowerInit();               //蓝牙电源初始化完成，默认关闭
   MotorInit();	                //马达初始化
   BatteryCheckInit();           //电池电压监测初始化
   IIC_Init();                   //IIC初始化
@@ -76,7 +76,7 @@ int main(void)
   NRF24L01_INIT();              //NRF24L01初始化
 	
   PowerOn();                    //开机等待
-  BT_ATcmdWrite();              //蓝牙写配置
+  //BT_ATcmdWrite();              //蓝牙写配置
  
 	BatteryCheck();
 
@@ -190,7 +190,7 @@ int main(void)
 			  //PC Monitor
 #ifndef UART_DEBUG
 				if(btSrc!=SRC_APP){
-					//CommPCUploadHandle();	//tobe improved inside
+					CommPCUploadHandle();	//tobe improved inside
 				}
 #endif
 				
