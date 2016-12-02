@@ -1,6 +1,6 @@
 #ifndef _EXTERN_VARIABLE_H_
 #define _EXTERN_VARIABLE_H_
-#include "NRF24L01.h"
+#include "RF.h"
  
 //
 enum{BT=0,NFRC,PC,APP};

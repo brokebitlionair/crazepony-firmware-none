@@ -8,7 +8,7 @@
 #include "imu.h"
 #include "SysConfig.h"
 #include "BT.h"
-#include "NRF24L01.h"
+#include "RF.h"
 //
 #define TABLE_ADDRESS (STM32_FLASH_BASE+STM32_FLASH_OFFEST+0)
 //用来存放EEPROM列表上的存放的参数变量的信息
@@ -48,13 +48,6 @@ void TableWriteEEPROM(void)
 		STMFLASH_Write(TABLE_ADDRESS,(uint16_t *)(&table),paramNums * 2);
 }
 
-
-extern u8 RX_ADDRESS[RX_ADR_WIDTH];
-
-
-extern u8 NRFMatched;
-
-
 void TableToParam(void)
 {
 		uint8_t i=0;
@@ -82,16 +75,7 @@ void TableToParam(void)
 			
 		}
 		
-		for(i=0;i<5;i++){
-			((u8 *)(&RX_ADDRESS))[i] = ((float *)(&table.NRFaddr))[i];
-			
-			printf("RX_ADDRESS[%d]:0x%x\r\n",i,RX_ADDRESS[i]);
-		}
-		
 	  BTstate = table.BTstate;
-		NRFMatched = table.NRFmatchFlag;
-		
-		
 		
 }
 
@@ -119,14 +103,8 @@ void ParamToTable(void)
 			table.accOffset[i]=imu.accOffset[i];
 			table.gyroOffset[i]=imu.gyroOffset[i];
 		}
-		
-		for(i=0;i<5;i++)
-		((float *)(&table.NRFaddr))[i] = ((u8 *)(&RX_ADDRESS))[i];
-		
-		
-		table.BTstate = BTstate;
-		table.NRFmatchFlag = NRFMatched;
-		
+			
+		table.BTstate = BTstate;		
 		
 }
 

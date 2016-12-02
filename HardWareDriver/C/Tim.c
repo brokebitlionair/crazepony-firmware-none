@@ -85,20 +85,6 @@ void TIM3_IRQHandler(void)		//打印中断服务程序
       if( DebugCounter==500)
             {
             DebugCounter=0;
-            printf(" ******************************************************************\r\n");
-            printf(" *       ____                      _____                  +---+   *\r\n");
-            printf(" *      / ___\\                     / __ \\                 | R |   *\r\n");
-            printf(" *     / /                        / /_/ /                 +---+   *\r\n");
-            printf(" *    / /   ________  ____  ___  / ____/___  ____  __   __        *\r\n");
-            printf(" *   / /  / ___/ __ `/_  / / _ \\/ /   / __ \\/ _  \\/ /  / /        *\r\n");
-            printf(" *  / /__/ /  / /_/ / / /_/  __/ /   / /_/ / / / / /__/ /         *\r\n");
-            printf(" *  \\___/_/   \\__,_/ /___/\\___/_/    \\___ /_/ /_/____  /          *\r\n");
-            printf(" *                                                  / /           *\r\n");
-            printf(" *                                             ____/ /            *\r\n");
-            printf(" *                                            /_____/             *\r\n");
-            printf(" ******************************************************************\r\n");
-            printf("\r\n");
-            printf("\r\n");
             printf(" Yaw ---> %5.2f degree\r\n",(float)imu.yaw);
             printf(" Pitch---> %5.2f degree\r\n",(float)imu.pitch);
             printf(" Roll ---> %5.2f degree\r\n",(float)imu.roll);
@@ -117,7 +103,6 @@ void TIM3_IRQHandler(void)		//打印中断服务程序
 						
 						hoverThru = estimateHoverThru();
 						printf(" Hover Thru---> %3.2f\r\n",hoverThru);
-						printf(" RX Addr ---> 0x%x\r\n",RX_ADDRESS[4]);
             printf("====================================\r\n");
         }
         TIM_ClearITPendingBit(TIM3 , TIM_FLAG_Update);   //清除中断标志   

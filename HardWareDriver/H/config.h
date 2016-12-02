@@ -10,7 +10,7 @@
 #include "BT.h"
 #include "extern_variable.h"
 #include "MPU6050.h"
-#include "NRF24L01.h"
+#include "RF.h"
 #include "Moto.h"
 #include "Tim.h"
 #include "IIC.h"

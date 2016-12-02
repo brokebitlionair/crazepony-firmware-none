@@ -20,7 +20,7 @@ ReceiveData.c file
 ------------------------------------
 */
 
-  
+#include "config.h" 
 #include "ReceiveData.h"
 #include "imu.h"
 #include "moto.h"
@@ -34,95 +34,82 @@ ReceiveData.c file
 #include "stm32f10x_it.h"
 #include "SysConfig.h"
 #include "CommApp.h"
-#include "NRF24L01.h"
+#include "RF.h"
 #include "delay.h"
 #include "ConfigTable.h"
 
-
-uint8_t 		FLY_ENABLE=0;//aircraft enable
+uint8_t FLY_ENABLE=0;//aircraft enable
+uint8_t imuCaliFlagTime,FlyEnableTime,FlyDisableTime;
 
 RC_GETDATA  RC_DATA;//={0,0,0,0},RC_DATA_RAW={0,0,0,0};	// RC_DATA是处理后的期望四通
 
 extern uint32_t lastGetRCTime;
+extern uint8_t RF_RXDATA[7];
 
-//函数名：ReceiveDataFormNRF()
+int culValue(int input, int inMin, int inMax, int outMin, int outMax) 
+{
+    	return (int)((input*1.0 - inMin*1.0) * (outMax*1.0 - outMin*1.0) / (inMax*1.0 - inMin*1.0) + outMin);
+}
+
+//函数名：ReceiveDataFormRF()
 //输入：无
 //输出: 无
 //描述：将收到的2.4G遥控数据赋值给对应的变量
 //作者：马骏
-void ReceiveDataFormNRF(void)
+void ReceiveDataFormRF(void)
 {
- if((NRF24L01_RXDATA[0] == '$')&&(NRF24L01_RXDATA[1] == 'M')&&(NRF24L01_RXDATA[2] == '<'))
-	 {
-		 switch(NRF24L01_RXDATA[4])
-		 {
-			 case MSP_SET_4CON:
-												 rcData[THROTTLE]=NRF24L01_RXDATA[5]+(NRF24L01_RXDATA[6]<<8);//UdataBuf[6]<<8 | UdataBuf[5];
-												 rcData[YAW]=NRF24L01_RXDATA[7]   +  (NRF24L01_RXDATA[8]<<8);   //UdataBuf[8]<<8 | UdataBuf[7];
-												 rcData[PITCH]=NRF24L01_RXDATA[9] + (NRF24L01_RXDATA[10]<<8);  //UdataBuf[10]<<8 | UdataBuf[9];
-												 rcData[ROLL]=NRF24L01_RXDATA[11] + (NRF24L01_RXDATA[12]<<8); //UdataBuf[12]<<8 | UdataBuf[11];
-			 break;
-			  case MSP_ARM_IT://MSP_ARM_IT
-						armState =REQ_ARM;
-				break;
-			 case MSP_DISARM_IT:
-					armState =REQ_DISARM;
-			 break;
-			 case MSP_ACC_CALI:
-					imuCaliFlag = 1;
-			 break;
-		 }
+		if((RF_RXDATA[0] == 0xfe) && (RF_RXDATA[6] == 0xfa))
+		{
+			rcData[THROTTLE]=culValue(RF_RXDATA[3],10,245,1100,1900);
+			rcData[YAW]=culValue(RF_RXDATA[4],10,245,1900,1100);
+			rcData[PITCH]=culValue(RF_RXDATA[1],10,245,1800,1200);
+			rcData[ROLL]=culValue(RF_RXDATA[2],10,245,1200,1800);
 		 
-	 }	
+//			if(RF_RXDATA[5]&0x10) SetHeadFree(1);
+//			else SetHeadFree(0);
+			
+			
+			if((RF_RXDATA[3] < 0x3A) && (RF_RXDATA[4] < 0x3A)) //左摇杆右下
+			{
+//				if((RF_RXDATA[1] < 0x3A) && (RF_RXDATA[2] < 0x3A))  //右摇杆右下
+//				{
+					imuCaliFlagTime++;
+					if(imuCaliFlagTime > 80)
+					{
+						imuCaliFlagTime = 0;
+						imuCaliFlag = 1;
+					}
+//				}
+//				else
+//				{
+//					FlyDisableTime++;
+//					if(FlyDisableTime > 80)
+//					{
+//						FlyDisableTime = 0;
+//						armState =REQ_ARM;
+//					}
+//			}
+			}
+		 
+			else if((RF_RXDATA[3] < 0x3A) && (RF_RXDATA[4] > 0xBA)) //左摇杆左下
+			{
+				FlyEnableTime++;
+				if(FlyEnableTime > 80)
+				{
+					FlyEnableTime = 0;
+					armState =REQ_ARM;
+				}
+			}
+		 
+			else 
+			{
+				imuCaliFlagTime = 0;
+				FlyEnableTime = 0;
+				FlyDisableTime = 0;
+			}
+		}
 		lastGetRCTime=millis();		//ms
 }
 
-/*****NRF24L01 match *****/
-static uint8_t sta;
-extern u8  RX_ADDRESS[RX_ADR_WIDTH];		
-extern void SaveParamsToEEPROM(void);
-u8 NRFMatched = 0;
-
-void NRFmatching(void)
-{
-	static uint32_t nTs,nT;
-	static uint32_t writeOvertime = 2 * 1000000;// unit :us
-	
-	LedC_on;   //led3 always on when 2.4G matching
-	nTs = micros();
-	
-  do  
-	{   
-		  NRFMatched = 0;
-		  nT = micros() - nTs;
-		  
-		  if(nT >= writeOvertime){
-				RX_ADDRESS[4] = table.NRFaddr[4];
-				break;	//exit when time out,and do not change original address
-			}
-
-			SetRX_Mode();                 // reset RX mode write RX panel address
-			delay_ms(4);									// delay is needed after reset NRF
-		  sta = NRF_Read_Reg(NRF_READ_REG + NRFRegSTATUS);
-      
-		  if((sta & 0x0E )== 0x00){
-				NRFMatched = 1;
-			}else{
-				RX_ADDRESS[4] ++;		//search the next RX_ADDRESS
-				if(RX_ADDRESS[4] == 0xff ){
-					RX_ADDRESS[4] = 0x00;
-				}
-			}
-
-  }while((sta & 0x0E )== 0x0E); 
-	
-	SetRX_Mode();                 // reset RX mode
-	
-	if((NRFMatched == 1)&&(RX_ADDRESS[4]!= table.NRFaddr[4])){
-		SaveParamsToEEPROM();			//write eeprom when current addr != original addr
-	}
-	
-	LedC_off;		// matching end 
-}
 
 

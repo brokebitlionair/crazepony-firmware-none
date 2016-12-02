@@ -70,8 +70,6 @@ float estimateHoverThru(void);
 
 void SetHeadFree(uint8_t on);
 
-extern u16 PIDWriteBuf[3];//写入flash的临时数字，由NRF24L01_RXDATA[i]赋值 
-
 extern PID_Typedef pitch_angle_PID;	  //pitch角度环的PID
 extern PID_Typedef pitch_rate_PID;		//pitch角速率环的PID
 

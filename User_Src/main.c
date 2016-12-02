@@ -73,7 +73,8 @@ int main(void)
 	
   //HMC5883L_SetUp();           //初始化磁力计HMC5883L
 
-  NRF24L01_INIT();              //NRF24L01初始化
+  RF_Init();              //RF初始化
+	RF_RxMode();
 	
   PowerOn();                    //开机等待
   //BT_ATcmdWrite();              //蓝牙写配置
@@ -162,7 +163,7 @@ int main(void)
 		}
 		
 		//Need to recieve 2401 RC instantly so as to clear reg.
-		Nrf_Irq();
+		ucRF_DumpRxData(RF_RXDATA,7);
 		
 		//50Hz Loop
 		if(loop50HzFlag)
