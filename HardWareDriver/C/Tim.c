@@ -94,9 +94,9 @@ void TIM3_IRQHandler(void)		//打印中断服务程序
             printf(" Motor M3 PWM---> %d\r\n",TIM2->CCR3);
             printf(" Motor M4 PWM---> %d\r\n",TIM2->CCR4);
             printf("====================================\r\n");
-						printf(" Pressure ---> %5.2f Pa\r\n",(float)MS5611_Pressure);
-            printf(" Altitude ---> %5.2f M\r\n",(float)MS5611_Altitude);
-            printf(" Temperature---> %5.2f C\r\n",(float)MS5611_Temperature);
+						printf(" Pressure ---> %5.2f Pa\r\n",(float)FBM320.RP);
+            printf(" Altitude ---> %5.2f M\r\n",(float)FBM320.Altitude);
+            printf(" Temperature---> %5.2f C\r\n",(float)FBM320.RT*0.01f);
 						printf("====================================\r\n");
 						//根据采集到的AD值，计算实际电压。硬件上是对电池进行分压后给AD采集的，所以结果要乘以2
             printf(" Battery Voltage---> %3.2fv\r\n",Battery.BatteryVal);

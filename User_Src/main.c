@@ -81,7 +81,7 @@ int main(void)
  
 	BatteryCheck();
 
-	MS5611_Init();
+	FBM320_Initial();
 
 	IMU_Init();			// sample rate and cutoff freq.  sample rate is too low now due to using dmp.
 
@@ -143,7 +143,7 @@ int main(void)
 				accUpdated=1;
 			
 				//气压读取
-				MS5611_ThreadNew();		//FSM, take aboue 0.5ms some time
+				FBM320_Thread();		//FSM, take aboue 0.5ms some time
 
 				//imu校准
 				if(imuCaliFlag)

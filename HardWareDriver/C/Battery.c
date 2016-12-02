@@ -75,9 +75,9 @@ void BatteryCheckInit()
 	while(ADC1->CR2&1<<2);  //等待校准结束
 	//该位由软件设置以开始校准，并在校准结束时由硬件清除  
   
-  Battery.BatReal = 3.95;//单位为v 电池实际电压  校准电压时修改
-  Battery.ADinput = 1.98;//单位为v R15和R17连接处电压 校准电压时修改
-  Battery.ADRef   = 3.26;//单位为v 单片机供电电压   校准电压时修改
+  Battery.BatReal = 4.18;//单位为v 电池实际电压  校准电压时修改
+  Battery.ADinput = 2.09;//单位为v R15和R17连接处电压 校准电压时修改
+  Battery.ADRef   = 3.58;//单位为v 单片机供电电压   校准电压时修改
   Battery.Bat_K   = Battery.BatReal/Battery.ADinput;//计算电压计算系数
 	Battery.overDischargeCnt = 0;
   

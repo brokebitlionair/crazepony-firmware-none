@@ -26,7 +26,7 @@
 #include "DMP.h"
 #include "Battery.h"
 #include "HMC5883L.h"
-#include "MS5611.h"
+#include "FBM320.h"
 
 
 #endif
